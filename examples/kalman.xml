@@ -36,7 +36,7 @@
   </kalman>
   
   <ekf>
-    <order> 2 </order>
+    <order> 1 </order>
     <variation> 0.1 </variation>
   </ekf>
   
