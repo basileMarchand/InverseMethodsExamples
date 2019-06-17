@@ -29,9 +29,7 @@ Applications
 
 Le premier exemple traité est un problème d'aéroélasticité à deux degrés de libertés. 
 
-.. figure::
-
-   images/airfoil_1.png
+.. image:: images/airfoil_1.png
 
 
 
