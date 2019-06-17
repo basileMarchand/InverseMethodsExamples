@@ -1,0 +1,184 @@
+\documentclass[10pt]{standalone}
+% handout
+\usepackage[utf8]{inputenc} % un package
+\usepackage[T1]{fontenc} % un second package
+\usepackage[francais]{babel} % un troisième package
+\renewcommand{\ttdefault}{pcr}
+\usepackage{marvosym}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc,matrix,decorations.markings,decorations.pathreplacing,decorations.pathmorphing}
+\usetikzlibrary{mindmap,trees,positioning}
+\usetikzlibrary{patterns}
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{rosso}{RGB}{220,57,18}
+\definecolor{giallo}{RGB}{255,153,0}
+\definecolor{blu}{RGB}{102,140,217}
+\definecolor{verde}{RGB}{16,150,24}
+\definecolor{viola}{RGB}{153,0,153}
+
+\definecolor{bleubase}{RGB}{102,140,217}
+\definecolor{bleu1}{RGB}{30,127,203}
+\definecolor{bleu2}{RGB}{116,208,241}
+\definecolor{bleu3}{RGB}{102,0,231}
+\definecolor{bleu4}{RGB}{84,114,174}
+
+\definecolor{rougebase}{RGB}{220,57,18}
+\definecolor{rouge1}{RGB}{231,62,1}
+\definecolor{rouge2}{RGB}{184,32,16}
+\definecolor{rouge3}{RGB}{174,74,52}
+
+\makeatletter
+\newif\ifspiral@is@clockwise
+  \pgfkeys{
+    spiral/.is family,
+    spiral,
+    start angle/.initial=0,
+    end angle/.initial=0,
+    start radius/.initial=0,
+    end radius/.initial=1,
+    revolutions/.initial=2,
+    name/.initial=,
+    center/.initial={(0,0)},
+    sample rate/.initial =5,
+    clockwise spiral/.is if=spiral@is@clockwise,
+    clockwise spiral/.default=false,
+    clockwise/.style={clockwise spiral=true},
+    default spiral/.style={start angle=0,end angle=0, start radius=0, end radius=1, revolutions=2, name=, center={(0,0)}, sample rate=5, clockwise spiral=false}
+  }
+  \newcommand\spiral[2][]{
+    \pgfkeys{spiral, default spiral,#2,
+      start angle/.get=\spiral@start@angle,
+      end angle/.get=\spiral@end@angle,
+      start radius/.get=\spiral@start@radius,
+      end radius/.get=\spiral@end@radius,
+      revolutions/.get=\spiral@revolutions,
+      name/.get=\spiral@name,
+      sample rate/.get=\spiral@sample@rate,
+      center/.get=\spiral@center
+      }
+  \def\spiral@start@name{}
+  \def\spiral@end@name{}
+  \ifspiral@is@clockwise
+        \renewcommand*{\spiral@start@angle}{\pgfkeysvalueof{/spiral/end angle}}
+        \renewcommand*{\spiral@end@angle}{\pgfkeysvalueof{/spiral/start angle}}
+        \renewcommand*{\spiral@start@radius}{\pgfkeysvalueof{/spiral/end radius}}
+        \renewcommand*{\spiral@end@radius}{\pgfkeysvalueof{/spiral/start radius}}
+        \if\relax\detokenize{\spiral@name}\relax
+        \else
+          \renewcommand*{\spiral@start@name}{\spiral@name end}
+          \renewcommand*{\spiral@end@name}{\spiral@name start}
+        \fi
+    \else
+        \if\relax\detokenize{\spiral@name}\relax
+        \else
+          \renewcommand*{\spiral@start@name}{\spiral@name start}
+          \renewcommand*{\spiral@end@name}{\spiral@name end}
+        \fi
+  \fi
+  \pgfmathsetmacro{\spiral@domain}{\spiral@end@angle+\spiral@revolutions*360}
+  \pgfmathsetmacro{\spiral@growth}{180*(\spiral@end@radius-\spiral@start@radius)/(pi*(\spiral@domain-\spiral@start@angle))}
+  \draw [#1,
+         shift={\spiral@center},
+         domain=\spiral@start@angle*pi/180:\spiral@domain*pi/180,
+         variable=\t,
+         smooth,
+         samples=int(\spiral@domain/\spiral@sample@rate)] node[coordinate,shift={(\spiral@start@angle:\spiral@start@radius)}](\spiral@start@name){} plot ({\t r}: {\spiral@start@radius+\spiral@growth*\t-\spiral@growth*\spiral@start@angle*pi/180}) node[coordinate](\spiral@end@name){}
+  }
+\makeatother
+
+
+
+
+\newcommand{\airfoil}[1]{%
+\begin{scope}[yscale=#1]
+\draw[smooth,line width=2pt] plot coordinates {(0,0)(0.0095,0.0831)(0.0624,0.1691)(0.1590,0.2574)(0.2990,0.3467)(0.4824,0.4357)(0.7085,0.5225)(0.9765,0.6050)(1.2855,0.6812)(1.6341,0.7488)(2.0206,0.8055)(2.4433,0.8492)(2.8998,0.8778)(3.3879,0.8897)(3.9049,0.8833)(4.4459,0.8592)(5.0064,0.8210)(5.5876,0.7687)(6.1870,0.7023)(6.8016,0.6219)(7.4286,0.5277)(8.0650,0.4197)(8.7080,0.2980)(9.3544,0.1623)(10.0012,0.0125)};
+% intrado
+\draw[smooth,line width=2pt] plot coordinates {(0,0)(0.0095,-0.0831)(0.0624,-0.1691)(0.1590,-0.2574)(0.2990,-0.3467)(0.4824,-0.4357)(0.7085,-0.5225)(0.9765,-0.6050)(1.2855,-0.6812)(1.6341,-0.7488)(2.0206,-0.8055)(2.4433,-0.8492)(2.8998,-0.8778)(3.3879,-0.8897)(3.9049,-0.8833)(4.4459,-0.8592)(5.0064,-0.8210)(5.5876,-0.7687)(6.1870,-0.7023)(6.8016,-0.6219)(7.4286,-0.5277)(8.0650,-0.4197)(8.7080,-0.2980)(9.3544,-0.1623)(10.0012,-0.0125)};
+\end{scope}
+}%
+
+
+
+
+
+
+\begin{document}
+\sffamily
+\renewcommand{\ttdefault}{pcr}
+
+
+
+
+\tikzstyle{damper}=[thick,decoration={markings,  
+  mark connection node=dmp,
+  mark=at position 0.5 with 
+  {
+    \node (dmp) [thick,inner sep=0pt,transform shape,rotate=-90,minimum width=15pt,minimum height=3pt,draw=none] {};
+    \draw [thick] ($(dmp.north east)+(2pt,0)$) -- (dmp.south east) -- (dmp.south west) -- ($(dmp.north west)+(2pt,0)$);
+    \draw [thick] ($(dmp.north)+(0,-5pt)$) -- ($(dmp.north)+(0,5pt)$);
+  }
+}, decorate]
+
+\begin{tikzpicture}[scale=1]
+\tikzstyle{spring}=[snake=zigzag,thick,line before snake=0.3cm,line after  snake=0.3cm,segment length=6,segment amplitude=5,join=round]%
+%%%%%%%%%%%%%%% Part 1
+
+\begin{scope}[rotate around={-14:(6,0)}]
+
+% \draw[smooth,line width=2pt] plot coordinates {(0,0)(0.0095,0.0831)(0.0624,0.1691)(0.1590,0.2574)(0.2990,0.3467)(0.4824,0.4357)(0.7085,0.5225)(0.9765,0.6050)(1.2855,0.6812)(1.6341,0.7488)(2.0206,0.8055)(2.4433,0.8492)(2.8998,0.8778)(3.3879,0.8897)(3.9049,0.8833)(4.4459,0.8592)(5.0064,0.8210)(5.5876,0.7687)(6.1870,0.7023)(6.8016,0.6219)(7.4286,0.5277)(8.0650,0.4197)(8.7080,0.2980)(9.3544,0.1623)(10.0012,0.0125)};
+% % intrado
+% \draw[smooth,line width=2pt] plot coordinates {(0,0)(0.0095,-0.0831)(0.0624,-0.1691)(0.1590,-0.2574)(0.2990,-0.3467)(0.4824,-0.4357)(0.7085,-0.5225)(0.9765,-0.6050)(1.2855,-0.6812)(1.6341,-0.7488)(2.0206,-0.8055)(2.4433,-0.8492)(2.8998,-0.8778)(3.3879,-0.8897)(3.9049,-0.8833)(4.4459,-0.8592)(5.0064,-0.8210)(5.5876,-0.7687)(6.1870,-0.7023)(6.8016,-0.6219)(7.4286,-0.5277)(8.0650,-0.4197)(8.7080,-0.2980)(9.3544,-0.1623)(10.0012,-0.0125)};
+
+
+\airfoil{0.5}
+
+\coordinate (bout) at (11,0);
+\draw[dashed] (-1,0) -- (bout);
+\spiral[thick, black, shift={(6cm,0cm)}, thick]{end angle=-75, end radius= 0.5, name=sp2};
+\end{scope}
+\node[anchor=north east,font=\Large] at (5.9,-0.3) {$K_{\alpha}$};
+
+
+\draw[thick, dashed] ($(bout)-(3cm,0)$) -- (bout);
+\draw[->, thick] ($(bout)+(-2.5cm,0cm)$) arc (180:166:2.5);
+\node[anchor=north,font=\Large] at ($(bout)+(-2.5cm,0cm)$) {$\alpha$};
+
+\draw[thick] (8,0) -- (10,0);
+\draw[thick,->] (9.3,2) -- (9.3,0);
+\node[anchor=west, font=\Large] at (9.3,1) {$h$};
+
+%% Ressort lineaire
+\draw[thick,decoration={aspect=0.3, segment length=2mm, amplitude=2mm,coil},decorate] (6,1) -- (6,2);
+\draw[thick] (6,1) -- (6,0);
+\node[anchor=east,font=\Large] at (5.8,1.5) {$K_h$};
+% Encastrement
+\fill [pattern = north east lines] (0,2) rectangle (10,2.5);
+\draw [thick] (0,2) -- (10,2);
+% Amortissement meca
+\draw[thick,damper] (6.7,0.7) -- (6.7,2);
+\draw[thick] (6.7,0.7) -- (6,0.7);
+\node[anchor=west,font=\Large] at (6.8,1.65) {$C_h$};
+
+% Amortissement aero
+\begin{scope}[rotate around={-30:(6.8,1)}]
+\coordinate (A) at (7.5,1.);
+\coordinate (B) at (7.5,1.9);
+\coordinate (C) at (7.5,0);
+\coordinate (D) at (8.,1.);
+\coordinate (E) at (8.,1.9);
+%\draw[thick,damper] (D) -- (E);
+%\draw[thick] (D) -- (A);
+%\draw[thick] (E) -- (B);
+%\node[anchor=west,font=\Large] at (7.85,2) {$C_{\alpha}$};
+\end{scope}
+
+\draw[thick] (B) -- ($(B)+(0,0.55)$);
+\draw[thick] (C) -- (A);
+\draw[thick] (A) -- (B);
+\draw[thick] (6.,-0.5) edge[bend right] (C);
+
+
+\end{tikzpicture}
+\end{document}
