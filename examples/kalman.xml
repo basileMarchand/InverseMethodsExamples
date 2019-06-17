@@ -1,0 +1,48 @@
+<data>
+  <model>
+    <kh> 1. </kh>
+    <ka> 1. </ka>
+    <mass> 1. </mass>
+    <U> 0.2 </U>
+    <rho> 1. </rho>
+    <l> 1. </l>
+    <ch> 0.2 </ch>
+    <xf> 0.6 </xf>
+    <xc> 0.4 </xc>
+    <c> 1. </c>
+    <b> 0.5 </b>
+    <e> 0.05 </e>
+  </model>
+  
+  <time>
+    <newmark>
+      <alpha>0.5</alpha>
+      <beta> 0.25</beta>
+    </newmark>
+    <observations>
+      <dofs> 0 </dofs>
+      <step> 1001 </step>
+    </observations>
+    <initial> 0.1, -0.1 </initial>
+    <init> 0. </init>
+    <end>  10. </end>
+    <step> 10001 </step>
+  </time>
+  
+  <kalman>
+    <covariance_state> 0.01 </covariance_state>
+    <covariance_model> 0.002 </covariance_model>
+    <covariance_observation> 0.001 </covariance_observation> 
+  </kalman>
+  
+  <ekf>
+    <order> 2 </order>
+    <variation> 0.1 </variation>
+  </ekf>
+  
+  <ukf>
+    <alpha> 0.001 </alpha>
+    <beta> 2. </beta>
+    <kappa> 0. </kappa>
+  </ukf>
+</data>
